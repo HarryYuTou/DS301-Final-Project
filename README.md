@@ -7,12 +7,12 @@ This project explores various deep learning approaches for classifying sentiment
 ## Models Used
 
 ### 1. **Text-Only Model**
-- **Architecture**: LSTM
+- **Model**: LSTM
 - **Input**: tweet text
 - **Purpose**: Establish a baseline for text-based sentiment classification.
 
 ### 2. **Image-Only Model**
-- **Architecture**: ResNet-18 
+- **Model**: ResNet-18 
 - **Input**: Meme image
 - **Purpose**: Classify sentiment using only image content.
 
@@ -20,7 +20,7 @@ This project explores various deep learning approaches for classifying sentiment
 - **Captioning**: ViT-GPT2
 - **Text Extraction**: EasyOCR
 - **Fusion**: Concatenated with original tweet and fed into LSTM
-- **Purpose**: Capture embedded textual meaning within memes and combine with original text to do the classification.
+- **Purpose**: Capture embedded textual meaning within memes or general information from images and combine with original text to do the classification.
 
 ### 4. **Multimodal Model**
 - **Image Branch**: ResNet-18 
@@ -54,12 +54,16 @@ Below are the technical details and training procedures for each of the four mod
   - Lowercasing
   - Tokenization
 - **Architecture**:
-  - 1-layer LSTM 
-  - Followed by fully connected output layer
+  - Input dim=20000, output dim=128, input length=100
+  - LSTM layer with 256 units, 0.2 dropout
+  - Dense layer with 32 units and tanh
+  - Dense layer with 6 units and sigmoid
 - **Loss Function**: binary_crossentropy 
-- **Optimizer**: Adam 
-- **Batch Size**: 32
+- **Optimizer**: SGD
+- **Batch Size**: 64
 - **Epochs**: 20
+- **lr**:0.01
+- **Momentum**:0.1
 - **Train/Val/Test Split**: 80/10/10
 - **Output**: Multi-label classification for sentiment categories
 
@@ -73,11 +77,15 @@ Below are the technical details and training procedures for each of the four mod
   - Normalized using ImageNet statistics
 - **Architecture**:
   - Pretrained ResNet-18 
-  - All convolutional layers frozen; only last FC layers trained
+  - Final fc layer replaced with a linear layer
+  - Outputting size of train set - 1
+  - Multi-label classification with one output per label
 - **Loss Function**: BCEWithLogitsLoss
 - **Optimizer**: SGD
-- **Batch Size**: 32
 - **Epochs**: 10
+- **lr**:0.0001
+- **Momentum**:0.9
+- **Weight Decay**: 0.00001
 - **Output**: Multi-label classification for sentiment categories
 
 ---
@@ -92,8 +100,19 @@ Below are the technical details and training procedures for each of the four mod
   - Concatenate caption, extracted text and text tweet
 - **Tokenizer**: Same tokenizer used across all fused text
 - **Model**: LSTM (same architecture as the Pure Text model)
-- **Training Strategy**: Identical to pure text pipeline
-
+- **Architecture**:
+  - Input dim=20000, output dim=192, input length=100
+  - LSTM layer with 64 units, 0.0 dropout
+  - Dense layer with 64 units and relu
+  - Dense layer with 6 units and sigmoid
+- **Loss Function**: binary_crossentropy 
+- **Optimizer**: rmsprop
+- **Batch Size**: 64
+- **Epochs**: 20
+- **lr**:0.0042
+- **Momentum**:0.6
+- **Train/Val/Test Split**: 80/10/10
+- **Output**: Multi-label classification for sentiment categories
 ---
 
 ### 4. Multimodal Model (Image + Text Fusion)
