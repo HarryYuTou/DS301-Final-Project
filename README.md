@@ -141,7 +141,7 @@ Below are the technical details and training procedures for each of the four mod
 
 ## Key Observations
 
-- The **caption+text extraction fusion model** outperformed all others in terms of Jaccard accuracy.
+- The **caption+text extraction+text fusion model** outperformed all others in terms of Jaccard accuracy.
 - The **multimodal model** underperformed likely due to:
   - Feature imbalance between image and text branches.
   - Potential contradictory or weakly correlated information conveyed by texts and images, which may introduce noise and confuse the classifier.
